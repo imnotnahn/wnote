@@ -2,6 +2,21 @@
 
 All notable changes to the WNote project will be documented in this file.
 
+## [0.5.2] - 2025-05-24
+
+### Fixed
+- **Critical**: Fixed attachment inheritance bug where new notes with reused IDs would inherit attachments from deleted notes
+- **Critical**: Fixed timezone issue - all timestamps now use local system time instead of UTC
+- Enabled SQLite foreign key constraints to ensure proper cascade deletion
+- Improved attachment deletion to explicitly remove records from database before deleting note
+- Enhanced datetime parsing to support both standard and ISO formats for backward compatibility
+- Added better error handling for attachment file deletion from disk
+
+### Changed
+- All datetime operations now use local system timezone
+- Database connections now enforce foreign key constraints
+- Improved robustness of attachment management system
+
 ## [0.5.1] - 2024-03-19
 
 ### Changed

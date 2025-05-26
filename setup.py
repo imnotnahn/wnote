@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="wnote",
-    version="0.5.1",
+    version="0.5.2",
     description="Terminal Note Taking Application with beautiful UI",
     author="imnahn",
     py_modules=["wnote", "__init__"],

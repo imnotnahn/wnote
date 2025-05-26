@@ -111,3 +111,15 @@ celerybeat-schedule
 # IDE specific files
 *.swp
 *.swo
+
+# WNote specific
+# User data directories (optional - users might want to track their notes)
+# ~/.config/wnote/
+
+# Build artifacts
+*.whl
+*.tar.gz
+
+# Development test files
+test_*.txt
+*_test.txt

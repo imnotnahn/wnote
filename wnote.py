@@ -211,6 +211,7 @@ def get_connection():
     conn.execute("PRAGMA journal_mode = DELETE")
     conn.execute("PRAGMA synchronous = NORMAL")
     conn.execute("PRAGMA busy_timeout = 10000")
+    conn.execute("PRAGMA foreign_keys = ON")  # Enable foreign key constraints
     
     return conn
 
@@ -251,7 +252,17 @@ def get_tag_id(tag_name):
 
 def format_datetime(dt_str):
     """Format datetime string for display."""
-    dt = datetime.datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+    try:
+        # Try to parse as standard datetime format first (from our local time)
+        dt = datetime.datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        try:
+            # Fallback to ISO format (for backwards compatibility)
+            dt = datetime.datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        except ValueError:
+            # If all fails, try to parse without timezone info
+            dt = datetime.datetime.fromisoformat(dt_str)
+    
     return dt.strftime("%d/%m/%Y %H:%M")
 
 def get_tag_color(tag, config):
@@ -285,9 +296,10 @@ def create_note(title, content, tags=None):
         next_id = result[0] if result[0] is not None else 1
         
         # Use INSERT OR REPLACE to handle the case where we're using a previously deleted ID
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute(
-            "INSERT INTO notes (id, title, content) VALUES (?, ?, ?)",
-            (next_id, title, content)
+            "INSERT INTO notes (id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+            (next_id, title, content, current_time, current_time)
         )
         note_id = next_id
         
@@ -386,7 +398,8 @@ def update_note(note_id, title=None, content=None, tags=None):
             params.append(content)
         
         if updates:
-            updates.append("updated_at = CURRENT_TIMESTAMP")
+            updates.append("updated_at = ?")
+            params.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             query = f"UPDATE notes SET {', '.join(updates)} WHERE id = ?"
             params.append(note_id)
             cursor.execute(query, params)
@@ -424,6 +437,10 @@ def delete_note(note_id):
         cursor.execute("SELECT stored_path FROM attachments WHERE note_id = ?", (note_id,))
         attachments = cursor.fetchall()
         
+        # Explicitly delete attachment records from database first
+        cursor.execute("DELETE FROM attachments WHERE note_id = ?", (note_id,))
+        
+        # Delete the note (this will also cascade delete note_tags and reminders due to foreign keys)
         cursor.execute("DELETE FROM notes WHERE id = ?", (note_id,))
         
         conn.commit()
@@ -432,10 +449,13 @@ def delete_note(note_id):
         for attachment in attachments:
             stored_path = attachment['stored_path']
             if os.path.exists(stored_path):
-                if os.path.isdir(stored_path):
-                    shutil.rmtree(stored_path)
-                else:
-                    os.remove(stored_path)
+                try:
+                    if os.path.isdir(stored_path):
+                        shutil.rmtree(stored_path)
+                    else:
+                        os.remove(stored_path)
+                except Exception as e:
+                    print(f"Warning: Could not delete attachment file {stored_path}: {e}")
                 
         return True
     except Exception as e:
@@ -506,10 +526,11 @@ def add_attachment(note_id, file_path):
             raise IOError(f"Failed to copy file: {e}. Check permissions and disk space.")
         
         # Record the attachment in the database
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute("""
-            INSERT INTO attachments (note_id, filename, original_path, stored_path, is_directory)
-            VALUES (?, ?, ?, ?, ?)
-        """, (note_id, filename, abs_path, attachment_path, 1 if is_directory else 0))
+            INSERT INTO attachments (note_id, filename, original_path, stored_path, is_directory, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (note_id, filename, abs_path, attachment_path, 1 if is_directory else 0, current_time))
         
         conn.commit()
         return True
@@ -638,10 +659,11 @@ def add_reminder(note_id, reminder_datetime, message=None):
         if not cursor.fetchone():
             return False, f"Note with ID {note_id} not found"
         
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute("""
-            INSERT INTO reminders (note_id, reminder_datetime, message)
-            VALUES (?, ?, ?)
-        """, (note_id, reminder_datetime, message))
+            INSERT INTO reminders (note_id, reminder_datetime, message, created_at)
+            VALUES (?, ?, ?, ?)
+        """, (note_id, reminder_datetime, message, current_time))
         
         conn.commit()
         return True, "Reminder added successfully"

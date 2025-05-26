@@ -17,6 +17,19 @@ WNote is a beautiful and user-friendly CLI note-taking application that runs ent
 - ⏰ Reminders for notes
 - 📤 Export notes to multiple formats (Markdown, HTML, Text)
 
+## Recent Updates (v0.5.2)
+
+🔧 **Critical Bug Fixes:**
+- **Fixed attachment inheritance bug**: New notes with reused IDs no longer inherit attachments from deleted notes
+- **Fixed timezone issue**: All timestamps now use local system time instead of UTC
+- **Improved data integrity**: Enabled SQLite foreign key constraints for proper cascade deletion
+- **Enhanced attachment management**: Better error handling and explicit cleanup of attachment files
+
+🚀 **Improvements:**
+- Better datetime parsing with support for both standard and ISO formats
+- More robust attachment deletion process
+- Enhanced database connection reliability
+
 ## Installation
 
 ### Requirements
