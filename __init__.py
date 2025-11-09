@@ -1,8 +1,17 @@
 """
 WNote - Terminal Note Taking Application
+
+This file is kept for backward compatibility.
+The actual package is now in the 'wnote' subdirectory.
 """
 
-from .wnote import cli
+# Import from the actual package
+try:
+    from wnote.cli import cli
+    from wnote import __version__
+except ImportError:
+    # Fallback for development/transition period
+    __version__ = "0.6.1"
+    cli = None
 
-__version__ = "0.5.2"
-__all__ = ["cli"] 
+__all__ = ["cli", "__version__"]

@@ -123,3 +123,12 @@ celerybeat-schedule
 # Development test files
 test_*.txt
 *_test.txt
+
+#some md files
+REFACTORING_SUMMARY.md
+DEVELOPMENT.md
+MIGRATION_GUIDE.md
+HUONG_DAN_UPLOAD_PYPI.md
+
+#other
+wnote.egg-info/
