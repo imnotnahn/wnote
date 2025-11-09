@@ -6,38 +6,6 @@
 
 WNote is a beautiful, feature-rich CLI note-taking application that runs entirely in your terminal. Designed for developers and power users who prefer working in the command line, WNote combines simplicity with powerful features like tags, smart attachments with **symlink support**, reminders, templates, and backups.
 
-![WNote Demo](https://via.placeholder.com/800x450.png?text=WNote+Terminal+Application)
-
-## 🎯 Why WNote?
-
-- **💾 Space Efficient**: Symlink mode saves 99% disk space on attachments
-- **⚡ Lightning Fast**: Operations complete in milliseconds
-- **🎨 Beautiful UI**: Rich terminal interface with colors and tables
-- **🔒 Privacy First**: All data stored locally, no cloud sync
-- **🛠️ Developer Friendly**: Built with modern Python, easy to extend
-- **📦 Zero Config**: Works out of the box, customize when you need
-
-## ✨ Features
-
-### Core Features
-- ✏️ **Note Management**: Create, edit, view, update, and delete notes with ease
-- 🏷️ **Tag System**: Organize notes with customizable colored tags
-- 🔍 **Advanced Search**: Full-text search with relevance scoring and filtering
-- 📊 **Statistics**: Comprehensive statistics and analytics about your notes
-- 🎨 **Beautiful UI**: Rich terminal interface powered by the Rich library
-
-### Advanced Features
-- 📎 **Smart Attachments**: Three modes for maximum flexibility
-  - 🔗 **Symlink** (default): Saves 99% space, stays in sync with original
-  - 📄 **Copy**: Safe snapshot, independent of original
-  - 📌 **Reference**: Path-only, no storage overhead
-- ⏰ **Reminders**: Set reminders for important notes with due date tracking
-- 📋 **Templates**: Create and use note templates for common formats
-- 💾 **Backup & Restore**: Automatic and manual backup system with compression
-- 📦 **Archive System**: Archive old notes without deleting them
-- 📤 **Export**: Export notes to Markdown, HTML, or plain text
-- 🔗 **Note Linking**: Create relationships between notes (coming soon)
-- 📝 **Editor Integration**: Use your favorite text editor (vim, nano, etc.)
 
 ## 🏗️ Architecture
 
@@ -282,15 +250,6 @@ wnote delete work --tag
 
 Available colors: `red`, `green`, `blue`, `yellow`, `magenta`, `cyan`, `white`, `black`, `bright_red`, `bright_green`, `bright_blue`, `bright_yellow`, `bright_magenta`, `bright_cyan`, `bright_white`, `bright_black`
 
-### Attachments
-
-WNote v0.6.1+ supports **three attachment modes** for maximum flexibility:
-
-| Mode | Icon | Description | Use Case | Disk Usage |
-|------|------|-------------|----------|------------|
-| **Symlink** 🔗 | Default | Creates symbolic link | Files you update frequently | <1% |
-| **Copy** 📄 | Safe | Copies file/folder | Snapshots, backups | 100% |
-| **Reference** 📌 | Minimal | Saves path only | Large files on external drives | 0% |
 
 ```bash
 # Attach with symlink (default, recommended)
@@ -323,12 +282,6 @@ wnote deattach 1 --all
 wnote show 1 -o  # Auto-open all attachments
 ```
 
-**🛡️ Safety Note**: When you delete a note or remove an attachment:
-- **Symlink mode**: Only the link is removed, original file stays intact ✅
-- **Copy mode**: Only the copied file is removed, original stays intact ✅
-- **Reference mode**: Only the path record is removed, original untouched ✅
-
-**Your original files are NEVER deleted!**
 
 ### Reminders
 
@@ -548,53 +501,6 @@ pip install dist/wnote-0.6.1-py3-none-any.whl
 pip install -e .
 ```
 
-## ⚡ Performance & Storage
-
-### Attachment Mode Comparison
-
-| Metric | Symlink 🔗 | Copy 📄 | Reference 📌 |
-|--------|------------|---------|--------------|
-| **Attach 100MB file** | <0.1s | ~2s | <0.1s |
-| **Attach 1GB folder** | <0.1s | ~30s | <0.1s |
-| **Disk overhead** | <0.1% | 100% | 0% |
-| **Speed** | **20-300x faster** | Baseline | **20-300x faster** |
-| **Stays in sync** | ✅ Yes | ❌ No | ✅ Yes |
-| **Snapshot** | ❌ No | ✅ Yes | ❌ No |
-| **Original file needed** | ✅ Yes | ❌ No | ✅ Yes |
-
-### Storage Example
-
-```
-Scenario: 10 notes with 100MB attachments each
-
-Symlink mode:  ~10KB   (99.99% space saved!)
-Copy mode:     ~1GB    (full duplication)
-Reference mode: ~5KB   (only paths stored)
-```
-
-### When to Use Each Mode
-
-**🔗 Symlink (Default)**
-- ✅ Files you're actively working on
-- ✅ Large files/folders (videos, datasets, projects)
-- ✅ Files on same filesystem
-- ✅ When you want to save space
-- ❌ Files on removable drives (might disconnect)
-
-**📄 Copy**
-- ✅ Creating backups/snapshots
-- ✅ Files you might delete later
-- ✅ Files on removable drives
-- ✅ When you need version history
-- ❌ Very large files (wastes space)
-
-**📌 Reference**
-- ✅ Very large files (>1GB)
-- ✅ Files on external/network drives
-- ✅ When you just need to remember location
-- ✅ Files you won't delete
-- ❌ If you need quick file access
-
 ## 🐛 Troubleshooting
 
 ### Database Locked Error
@@ -733,35 +639,6 @@ wnote <command> --help
 └── archive/              # Archived exports
 ```
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Contribution Guidelines
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Code Style
-
-- Follow PEP 8 guidelines
-- Use type hints where appropriate
-- Add docstrings to functions and classes
-- Write tests for new features
-- Format code with `black` and `isort`
-
-### Areas for Contribution
-
-- 🐛 Bug fixes and improvements
-- ✨ New features (templates, plugins, integrations)
-- 📚 Documentation improvements
-- 🌍 Translations (i18n support)
-- 🎨 UI/UX enhancements
-- 🧪 Test coverage expansion
-- 🚀 Performance optimizations
 
 ## 🆕 What's New in v0.6.1
 
@@ -783,42 +660,6 @@ wnote attach 1 important.pdf --mode copy
 # Reference mode (path only)
 wnote attach 1 /external/dataset.csv --mode reference
 ```
-
-### 🛡️ Critical Bug Fixes
-
-- **Fixed**: Permanent delete now properly removes attachments from disk
-- **Fixed**: Original files are never deleted (only links/copies removed)
-- **Fixed**: Help text formatting for better readability
-
-### 📊 Performance Improvements
-
-- **20-300x faster** attachment operations
-- **99% disk space savings** with symlink mode
-- Better database error handling with retry logic
-
-### 🎨 UI/UX Improvements
-
-- Mode indicators in attachment listings (🔗 📄 📌)
-- Better help text formatting with examples
-- Broken symlink detection (shows "❌ Missing")
-- Improved error messages
-
-## 🔄 Migrating from v0.6.0 to v0.6.1
-
-**Good news**: Migration is automatic! Just update and run.
-
-```bash
-# Update WNote
-pip install --upgrade wnote
-
-# Run any command to trigger auto-migration
-wnote show
-
-# Your existing attachments will be marked as 'copy' mode
-# New attachments will default to 'symlink' mode
-```
-
-**No data loss** - all existing notes and attachments remain intact!
 
 ## 📝 License
 
